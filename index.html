@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Saat & Tarih - Minimal</title>
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--accent:#7dd3fc;--muted:#94a3b8}
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#031025 0%, #061326 100%);font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial}
+    .card{background:var(--card);color:white;padding:28px;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.6);width:320px;text-align:center}
+    .time{font-size:48px;font-weight:600;letter-spacing:1px}
+    .date{color:var(--muted);margin-top:6px}
+    .controls{display:flex;gap:8px;justify-content:center;margin-top:14px}
+    button{background:transparent;border:1px solid rgba(255,255,255,.08);color:var(--accent);padding:8px 12px;border-radius:8px;cursor:pointer}
+    .small{font-size:12px;color:var(--muted)}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div id="time" class="time">--:--:--</div>
+    <div id="date" class="date">---- ---, ----</div>
+    <div class="controls">
+      <button id="toggle">12 saat</button>
+      <div class="small" style="align-self:center">Yerel saat</div>
+    </div>
+  </div>
+
+  <script>
+    // Basit saat + tarih uygulaması
+    const timeEl = document.getElementById('time');
+    const dateEl = document.getElementById('date');
+    const toggle = document.getElementById('toggle');
+
+    let use24 = true; // başlangıç: 24 saat
+
+    function pad(n){return String(n).padStart(2,'0')}
+
+    function update(){
+      const now = new Date();
+      let h = now.getHours();
+      const m = now.getMinutes();
+      const s = now.getSeconds();
+
+      if(!use24){
+        const suffix = h >= 12 ? ' PM' : ' AM';
+        h = h % 12 || 12;
+        timeEl.textContent = `${pad(h)}:${pad(m)}:${pad(s)}${suffix}`;
+      } else {
+        timeEl.textContent = `${pad(h)}:${pad(m)}:${pad(s)}`;
+      }
+
+      // Tarih: Örnek -> Cuma, 31 Ekim 2025
+      const days = ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
+      const months = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+      const dayName = days[now.getDay()];
+      const day = now.getDate();
+      const monthName = months[now.getMonth()];
+      const year = now.getFullYear();
+      dateEl.textContent = `${dayName}, ${day} ${monthName} ${year}`;
+    }
+
+    // Toggle düğmesi
+    toggle.addEventListener('click', ()=>{
+      use24 = !use24;
+      toggle.textContent = use24 ? '24 saat' : '12 saat';
+      update();
+    });
+
+    // İlk güncelleme ve interval
+    update();
+    setInterval(update, 1000);
+  </script>
+</body>
+</html>
